@@ -510,20 +510,6 @@
     }
 
     /**
-     * checking that number satisfy format conditions
-     * and lays between settings.vMin and settings.vMax
-     * and the string length does not exceed the digits in settings.vMin and settings.vMax
-     */
-
-    function autoCheck(s, settings) {
-        s = autoStrip(s, settings);
-        s = truncateDecimal(s, settings);
-        s = fixNumber(s, settings.aDec, settings.aNeg);
-        var value = +s;
-        return value >= settings.vMin && value <= settings.vMax;
-    }
-
-    /**
      * Holder object for field properties
      */
 
@@ -614,7 +600,6 @@
                 parts = this.normalizeParts(left, right),
                 new_value = parts.join(''),
                 position = parts[0].length;
-            if (autoCheck(new_value, settingsClone)) {
                 new_value = truncateDecimal(new_value, settingsClone, paste);
                 if (position > new_value.length) {
                     position = new_value.length;
@@ -622,8 +607,6 @@
                 this.value = new_value;
                 this.setPosition(position, false);
                 return true;
-            }
-            return false;
         },
 
         /**
@@ -1083,7 +1066,7 @@
                         }
                         if (value !== '') {
                             value = autoStrip(value, $settings, strip_zero);
-                            if (checkEmpty(value, $settings) === null && autoCheck(value, $settings, $this[0])) {
+                            if (checkEmpty(value, $settings) === null) {
                                 value = fixNumber(value, $settings.aDec, $settings.aNeg);
                                 value = autoRound(value, $settings);
                                 value = presentNumber(value, $settings.aDec, $settings.aNeg);
@@ -1100,6 +1083,11 @@
                             $this.change();
                             delete holder.inVal;
                         }
+						
+						if (value > settings.vMax || value < settings.vMin) {
+							$this.val("");
+                        }
+						
                     });
                 }
             });
@@ -1177,9 +1165,6 @@
                     value = autoRound(value, settings);
                 }
                 value = presentNumber(value, settings.aDec, settings.aNeg);
-                if (!autoCheck(value, settings)) {
-                    value = autoRound('', settings);
-                }
                 value = autoGroup(value, settings);
                 if ($input) {
                     return $this.val(value);
