@@ -1066,6 +1066,11 @@
                         }
                         if (value !== '') {
                             value = autoStrip(value, $settings, strip_zero);
+							if (value > $settings.vMax) {
+								value = $settings.vMax.toString();
+							} else if (value < $settings.vMin) {
+								value = $settings.vMin.toString();
+							}
                             if (checkEmpty(value, $settings) === null) {
                                 value = fixNumber(value, $settings.aDec, $settings.aNeg);
                                 value = autoRound(value, $settings);
@@ -1083,11 +1088,6 @@
                             $this.change();
                             delete holder.inVal;
                         }
-						
-						if (value > settings.vMax || value < settings.vMin) {
-							$this.val("");
-                        }
-						
                     });
                 }
             });
